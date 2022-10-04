@@ -1,0 +1,415 @@
+  <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" 
+integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+<!-- for icons only online-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+
+    <title>Task Scheduler</title>
+    <style>
+        
+ /* .container{
+  font-family: Arial, Helvetica, sans-serif;
+margin: auto;
+ }
+ .form{
+background-color: #0000006e;
+width: 500px;
+margin: auto;
+padding: 10px 0 10px 10px;
+ }
+
+.form input:first-child:focus{
+   outline: none;
+ }
+.form input:first-child{
+width: 80%;
+height: 30px;
+}
+
+.form input:nth-child(2){
+  background-color: red;
+height: 40px;
+border: none;
+border-radius: 7px;
+color: white;
+font-weight: bold;
+}
+.tasks{
+margin: 20px auto;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+}
+.tasks div{
+background-color: #0000006e;
+width: 600px;
+display:flex;
+justify-content: space-around;
+align-items:center;
+margin:10px 0;
+padding: 10px 0 10px 10px;
+}
+.input2{
+width: 70%;
+height: 30px;
+}
+.delete{
+background-color: red;
+height: 35px;
+border: none;
+border-radius: 7px;
+color: white;
+width: 70px;
+}
+.unfinsh{
+background-color:red;
+height: 35px;
+border: none;
+border-radius: 7px;
+color: white;
+width: 90px;
+display:flex;
+justify-content: center;
+align-items:center;
+}
+.unfinsh:hover{
+  background-color: rgba(213, 36, 36, 0.82);
+}
+.delete:hover{
+  background-color: rgb(190,20,20);
+}
+.task{
+  cursor:pointer;
+}
+.done{
+  opacity :0.9;
+}
+.del-all{
+  background-color: red;
+height: 35px;
+border:3px solid red;
+border-radius: 7px;
+color: white;
+margin-left:50%;
+font-weight:bold;
+font-size:20px;
+transition:0.3s;
+} */
+/* .input2{
+width: 70%;
+height: 30px;
+}
+.delete{
+background-color: red;
+height: 35px;
+border: none;
+border-radius: 7px;
+color: white;
+width: 70px;
+}
+.unfinsh{
+background-color:red;
+height: 35px;
+border: none;
+border-radius: 7px;
+color: white;
+width: 90px;
+display:flex;
+justify-content: center;
+align-items:center;
+} */
+.unfinsh:hover{
+  background-color: rgba(213, 36, 36, 0.82);
+}
+.delete:hover{
+  background-color: rgb(190,20,20);
+}
+.task{
+  cursor:pointer;
+}
+.done{
+  opacity :0.9;
+}
+.del-all:hover{
+  transform:scale(1.1,1.1)
+}
+.colored{
+  background-color:green;
+}
+.colored:hover{
+  background-color:rgb(20,190,20);
+}
+.animate{
+animation-name :animate;
+  animation-duration: 0.2s;
+    animation-iteration-count: 3;
+  
+}
+@keyframes animate {
+  0%{
+    transform:rotate(0deg);
+  }
+  
+  25%{
+    transform:rotate(5deg);
+  }
+   50%{
+    transform:rotate(-5deg);
+  }
+  
+  100%{
+    transform:rotate(0deg);
+  }
+  
+}
+/* .footer{
+  height:50px;
+  width:100%;
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:bold;
+  font-size:24px;
+  line-height:1.7px;
+  background-image: linear-gradient( to right,red, green,yellow);
+  color:white;
+}   */
+    </style>
+</head>
+<body>
+    <div class="container">
+      
+      <div class="text-center text-primary pt-3">
+        <h1 class="">Task Scheduler</h1>
+        <p class="text-muted h6">Schedule your tasks, go and get them done, come back & set them done or delete them</p>
+      </div>
+
+  <div class="form">
+     <div class="input-group new-input p-4">
+          <input type="text" class="input form-control" placeholder="Tap to Add Task"> 
+          <button class="btn btn-info add p-3" type="button"> Add Task</button>
+        </div>
+
+    
+  </div>
+  <div class="tasks text-center row g-4">
+  </div>
+</div>
+<div class="text-center mt-3">
+  <button class="del-all btn btn-danger text-center"> Delete All</button>
+</div>
+
+
+<footer class="footer fixed-bottom text-center p-3 bg-dark lead text-white">Copyright&copy; Eren Yeager<footer> 
+
+
+
+
+
+
+
+
+    <script>
+let addTask = document.querySelector(".add");
+let tasksList = document.querySelector(".tasks");
+let input=document.querySelector(".input");
+let deleteAll =document.querySelector(".del-all");
+let node;
+
+
+setTimeout(function(){
+addTask.classList.add("animate")
+},2000)
+
+setTimeout(function(){
+addTask.classList.remove("animate")
+},3000)
+
+  
+let arrOfTasks =[];
+getDataFromLocalStorage();
+
+//check there is tasks in local sorage 
+if(localStorage.getItem("tasks")){
+    arrOfTasks=JSON.parse(localStorage.getItem("tasks"));
+}
+
+//submit task
+addTask.onclick=function(){
+    if(input.value !== ""){
+        AddTaskToArray(input.value);//add task to array of tasks
+        input.value="";
+        
+    }
+    else{
+        input.placeholder="Cant add Empty Task";
+        setTimeout(function(){
+            input.placeholder="Tap to Add Task";
+        },1500)
+        setTimeout(function(){
+            addTask.classList.add("animate");
+        },2000);
+        setTimeout(function(){
+             addTask.classList.remove("animate");
+        },2500)
+    }
+};
+
+
+//click to remove task
+tasksList.addEventListener("click",function(e){
+    if(e.target.classList.contains("delete")){
+        e.target.parentElement.remove();
+        deleteWith(e.target.parentElement.id);
+    }
+    //click to change task status
+    if(e.target.classList.contains("unfinsh")){
+        
+        ToggleStatus(e.target.parentElement.id);
+        e.target.parentElement.classList.toggle("done");
+        e.target.classList.toggle("colored");
+            e.target.innerHTML=node;
+     
+        
+    }});
+//deleting all taskes
+deleteAll.onclick=function(){
+    
+    if(arrOfTasks.length !== 0){
+        
+        let makeSure= confirm("Are You Sure u Want To Delete All Tasks");
+        if(makeSure==true){
+            localStorage.clear();
+            tasksList.innerHTML="";
+              setTimeout(function(){
+            addTask.classList.add("animate");
+        },2000);
+        setTimeout(function(){
+             addTask.classList.remove("animate");
+        },2500)
+           
+        }
+        arrOfTasks=[];
+    }
+    
+    else{
+        input.placeholder="No Tasks to be Deleted";
+        setTimeout(function(){
+            input.placeholder="Tap to Add Task"
+        },1500)
+          setTimeout(function(){
+            addTask.classList.add("animate");
+        },2000);
+        setTimeout(function(){
+             addTask.classList.remove("animate");
+        },2500)
+    }
+}
+
+
+function AddTaskToArray(taskText){
+    //task data
+    const task = {
+        id: Date.now(),
+        title :taskText,
+        completed:false,
+        node:"Not Done",
+    };
+    //push task to array of tasks
+    arrOfTasks.push(task);
+    
+    //add tasks to the page
+    addElementToPage(arrOfTasks);
+    //add task to local storge
+    addTasksToLocalStorage(arrOfTasks);
+}
+
+console.log()
+console.log()
+function addElementToPage(arrOfTasks) {
+    //empty task div
+    tasksList.innerHTML="";
+    //looping on array of tasks
+    arrOfTasks.forEach((task) => {
+        
+        let created_div = document.createElement("div");
+        created_div.setAttribute("id", task.id);
+        
+        created_div.classList.add("task","input-group");
+        let taskName = document.createElement("input");
+        taskName.classList.add("input2","form-control");
+        let delBtn = document.createElement("button");
+        delBtn.innerHTML="Delete";
+        delBtn.classList.add("delete","btn","btn-danger","mx-2");
+        let unfinsh =document.createElement("button");
+        unfinsh.innerHTML=task.node;
+        unfinsh.classList.add("unfinsh","btn","btn-danger","border-0");
+        taskName.value = task.title;
+        
+        created_div.appendChild(taskName);
+        created_div.appendChild(delBtn);
+        created_div.appendChild(unfinsh);
+        tasksList.appendChild(created_div);
+        
+        if (task.completed) {
+            created_div.className = "task done input-group" ;
+            task.node="Done";
+            unfinsh.classList.add("colored")
+            
+        }
+    })
+    
+};
+
+
+function addTasksToLocalStorage(arrOfTasks) {
+    
+    window.localStorage.setItem(`tasks`, JSON.stringify(arrOfTasks));
+    
+}
+
+//getting data from local storage
+function getDataFromLocalStorage(){
+    let data =window.localStorage.getItem("tasks");
+    if(data){
+        let tasks =JSON.parse(data);  
+        addElementToPage(tasks);
+    }
+}
+
+function deleteWith(taskId){
+    arrOfTasks=arrOfTasks.filter(function(task){
+        return task.id != taskId;
+    })
+    addTasksToLocalStorage(arrOfTasks)
+}
+
+function ToggleStatus(taskId){
+    for(let i=0;i<arrOfTasks.length ;i++){
+        if(arrOfTasks[i].id == taskId){
+            if(arrOfTasks[i].completed ==false){
+                arrOfTasks[i].completed =true;
+                node=arrOfTasks[i].node="Done" ;
+             
+                
+            }
+            else{
+                arrOfTasks[i].completed =false;
+                node=arrOfTasks[i].node="Not Done";
+               
+            }
+        }
+        addTasksToLocalStorage(arrOfTasks);
+        
+    }
+}
+
+    </script>
+</body>
+</html>
